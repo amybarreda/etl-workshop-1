@@ -1,4 +1,4 @@
-#extract.py
+# extract.py
 
 import pandas as pd
 import os
@@ -6,18 +6,21 @@ import os
 
 def extract_candidates(file_path: str) -> pd.DataFrame:
     
-    # 1️⃣ Validar que el archivo exista
+    # 1️⃣ Validate file existence
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File not found: {file_path}")
     
     print("File found. Reading CSV...")
     
-    # 2️⃣ Leer el CSV (sabemos que usa ;)
-    df = pd.read_csv(file_path, sep=';')
+    # 2️⃣ Read CSV (correct separator ;)
+    try:
+        df = pd.read_csv(file_path, sep=';')
+    except Exception as e:
+        raise RuntimeError(f"Error reading CSV: {e}")
     
     print("CSV loaded successfully.")
     
-    # 3️⃣ Validar columnas esperadas
+    # 3️⃣ Validate expected columns (order-independent)
     expected_columns = [
         "First Name",
         "Last Name",
@@ -31,12 +34,15 @@ def extract_candidates(file_path: str) -> pd.DataFrame:
         "Technical Interview Score"
     ]
     
-    if list(df.columns) != expected_columns:
-        raise ValueError("Unexpected column structure in CSV.")
+    missing_cols = set(expected_columns) - set(df.columns)
+    
+    if missing_cols:
+        print("Columns found in CSV:", list(df.columns))
+        raise ValueError(f"Missing columns in CSV: {missing_cols}")
     
     print("Column structure validated.")
     
-    # 4️⃣ Validación básica de tipos (sin transformar aún)
+    # 4️⃣ Basic validation info (no transformations here)
     print("\nInitial Data Types:")
     print(df.dtypes)
     
