@@ -3,7 +3,7 @@
 import sqlite3
 
 
-def load_to_dw(tables_dict, db_path="data_warehouse.db"):
+def load_to_dw(tables_dict, db_path="data/warehouse/data_warehouse.db"):
 
     print("Starting Load phase...")
 
