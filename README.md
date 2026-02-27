@@ -1,109 +1,124 @@
-```markdown
-# ETL Workshop 1 – Data Engineering Project
+# 🚀 ETL Workshop 1 – Data Engineering Project
+
+> End-to-end ETL pipeline with Dimensional Modeling and Analytical KPIs using SQLite.
+
+This project utilized AI and LLM
+
+primarily to make the README more visually appealing and understandable
+---
 
 ## 📌 Project Objective
 
-The objective of this project is to design and implement a complete ETL pipeline for a recruitment dataset containing 50,000 candidate applications.
+This project implements a complete **ETL pipeline** for a recruitment dataset containing **50,000 candidate applications**.
 
-The project simulates a real-world Data Engineering challenge, including:
+It simulates a real-world Data Engineering challenge involving:
 
-- Designing a Dimensional Data Model (Star Schema)
-- Implementing an ETL process in Python
-- Loading the transformed data into a Data Warehouse (SQLite)
-- Generating analytical KPIs directly from the Data Warehouse
-- Creating visualizations based exclusively on DW queries
+- ⭐ Dimensional Data Modeling (Star Schema)
+- 🔄 ETL implementation in Python
+- 🗄️ Data Warehouse loading (SQLite)
+- 📊 Analytical KPI generation from the DW
+- 📈 Data visualization using SQL-driven queries
 
-This project demonstrates data modeling decisions, ETL logic, analytical thinking, and professional documentation practices.
+The goal is to demonstrate strong data modeling decisions, ETL architecture design, and analytical reasoning.
 
 ---
 
-## 🏗️ Star Schema Design
+# 🏗️ Dimensional Data Model (Star Schema)
 
-### ⭐ Fact Table: `fact_applications`
+## ⭐ Fact Table: `fact_applications`
 
 The fact table stores measurable recruitment events.
 
-**Grain Definition:**
+### 📍 Grain Definition
 
 > One row represents one candidate application evaluated for a specific technology on a specific date.
 
-Each record contains:
+### Measures
+
+- `code_challenge_score`
+- `technical_interview_score`
+- `hired_flag`
+
+### Foreign Keys
 
 - `candidate_key`
 - `country_key`
 - `technology_key`
 - `seniority_key`
 - `date_key`
-- `code_challenge_score`
-- `technical_interview_score`
-- `hired_flag`
 
 ---
 
-### 📦 Dimension Tables
+## 📦 Dimension Tables
 
-The following dimension tables were designed:
+| Dimension | Description |
+|------------|-------------|
+| `dim_candidate` | Candidate personal & experience data |
+| `dim_country` | Country information |
+| `dim_technology` | Applied technology |
+| `dim_seniority` | Seniority level |
+| `dim_date` | Time attributes (year, month, quarter) |
 
-- `dim_candidate`
-- `dim_country`
-- `dim_technology`
-- `dim_seniority`
-- `dim_date`
+All dimensions use **surrogate keys**, following Data Warehouse best practices.
 
-Each dimension uses surrogate keys (not natural keys from the CSV), ensuring proper Data Warehouse design principles.
-
-The `dim_date` table enables time-based analysis such as yearly hiring trends.
+Natural keys from the CSV (e.g., email) were NOT used as primary keys.
 
 ---
 
-## 🧠 Design Decisions
+# 🧠 Design Decisions
 
-- Surrogate keys were generated for all dimensions.
-- Natural keys (e.g., email) were NOT used as primary keys in the Data Warehouse.
-- The business rule for hiring was implemented during the Transform phase:
-  
+### ✔ Business Rule Implementation
+
+A candidate is considered **HIRED** if:
+
 ```
 
-A candidate is HIRED if:
 Code Challenge Score ≥ 7 AND Technical Interview Score ≥ 7
 
 ```
 
-- All transformations were performed in Python before loading into the DW.
-- All analytical queries were executed from the Data Warehouse (not from the CSV).
+This logic is applied during the **Transform phase**.
+
+### ✔ Architectural Decisions
+
+- Clear separation of Extract, Transform, and Load
+- Surrogate keys for scalability
+- Dedicated `dim_date` for time analysis
+- All KPIs generated from the Data Warehouse (never from CSV)
 
 ---
 
-## 🔄 ETL Process
+# 🔄 ETL Pipeline
 
-The ETL pipeline is structured into three main stages:
+## 1️⃣ Extract
 
-### 1️⃣ Extract
 - Load CSV file
-- Validate file existence
-- Validate column structure
-- Perform initial data inspection
+- Validate file structure
+- Validate expected columns
+- Inspect data types
 
-### 2️⃣ Transform
+## 2️⃣ Transform
+
 - Correct data types
 - Apply business rule (`hired_flag`)
 - Create dimension tables
 - Generate surrogate keys
-- Build the fact table aligned with the defined grain
+- Build fact table aligned with defined grain
 
-### 3️⃣ Load
-- Create tables in SQLite using `create_tables.sql`
+## 3️⃣ Load
+
+- Execute `create_tables.sql`
 - Insert dimension tables
 - Insert fact table
-- Ensure referential integrity
+- Enforce referential integrity
 
 ---
 
-## 📊 KPIs & Visualizations
+# 📊 KPIs & Visualizations
 
-All KPIs were generated using SQL queries executed directly against the Data Warehouse.
+All KPIs are generated using SQL queries executed directly against the SQLite Data Warehouse.
 
-The following KPIs were implemented:
+## Implemented KPIs
 
 1. Hires by Technology
 2. Hires by Year
@@ -112,7 +127,7 @@ The following KPIs were implemented:
 5. Overall Hire Rate (%)
 6. Average Code Challenge Score by Technology
 
-Visualizations were implemented using Python (matplotlib) and are available in:
+Visualizations are implemented in:
 
 ```
 
@@ -120,11 +135,11 @@ visualization/kpi_dashboard.py
 
 ```
 
-All charts are generated from DW queries, ensuring proper ETL workflow compliance.
+All charts are based strictly on DW queries.
 
 ---
 
-## 📁 Project Structure
+# 📁 Project Structure
 
 ```
 
@@ -155,41 +170,35 @@ etl-workshop-1/
 ├── visualization/
 │   └── kpi_dashboard.py
 │
-├── README.md
 ├── requirements.txt
-└── .gitignore
+├── .gitignore
+└── README.md
 
 ````
 
 ---
 
-## ▶️ How to Run the Project
+# ▶️ How to Run the Project
 
-### 1° Install dependencies
+## 1️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ````
 
-### 2° Run the ETL pipeline
+## 2️⃣ Run ETL Pipeline
 
 ```bash
 python -m etl.main
 ```
 
-This will:
-
-* Extract data
-* Transform data
-* Load into SQLite Data Warehouse
-
-The DW will be created at:
+This will create:
 
 ```
 data/warehouse/data_warehouse.db
 ```
 
-### 3° Generate Visualizations
+## 3️⃣ Generate Visualizations
 
 ```bash
 python visualization/kpi_dashboard.py
@@ -197,44 +206,36 @@ python visualization/kpi_dashboard.py
 
 ---
 
-## 🔍 Data Quality Assumptions
+# 🔍 Data Quality Assumptions
 
-* The dataset contains one row per candidate application.
-* Email uniquely identifies a candidate in the source data.
-* No duplicate applications exist for the same candidate, technology, and date combination.
-* Missing values were assumed to be minimal and did not require complex imputation.
-* Scores are numeric and valid within expected ranges.
-
----
-
-## 📈 Example Outputs
-
-Example generated visualizations include:
-
-* Top 10 Technologies by Hires
-* Hiring Trends by Year
-* Seniority Distribution of Hires
-* Country Hiring Trends Over Time
-* Overall Hire Rate KPI
-* Average Code Challenge Score by Technology
-
-These outputs demonstrate the analytical capabilities enabled by the dimensional model.
+* Each row represents one candidate application.
+* Email uniquely identifies candidates in source data.
+* No duplicate application events exist for the same candidate + technology + date.
+* Scores are numeric and within valid ranges.
+* Missing values were minimal and did not require imputation.
 
 ---
 
-##  Key Learnings
+# 📈 Example Insights
 
-* Proper grain definition is critical for dimensional modeling.
-* Separation of Extract, Transform, and Load ensures clean architecture.
-* Surrogate keys improve DW scalability.
-* Analytical queries must always run against the Data Warehouse.
-* Visualization design significantly impacts interpretability.
+* Hiring rate indicates a selective recruitment process.
+* Technology hiring distribution reveals demand concentration.
+* Seniority analysis shows which levels are most successfully hired.
+* Yearly trend analysis highlights recruitment growth patterns.
 
 ---
 
-## 👩‍💻 Author
+# 🎓 Key Learnings
 
-Amy B
+* Grain definition drives dimensional model correctness.
+* Proper separation of ETL stages improves maintainability.
+* Surrogate keys are critical in scalable DW systems.
+* Visualization design significantly affects interpretability.
+* Analytical value must come from the Data Warehouse, not raw data.
+
+---
+
+# 👩‍💻 Author
+
+**Amy B**
 Data Engineering & Artificial Intelligence Student
-
-```
