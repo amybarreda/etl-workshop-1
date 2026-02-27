@@ -1,86 +1,28 @@
-# src/load.py
+# etl/load.py
 
 import sqlite3
+import os
 
 
 def load_to_dw(tables_dict, db_path="data/warehouse/data_warehouse.db"):
 
     print("Starting Load phase...")
 
+    # 1️⃣ Ensure warehouse directory exists
+    os.makedirs("data/warehouse", exist_ok=True)
+
+    # 2️⃣ Connect to SQLite DW
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-    # =========================
-    # 1️⃣ Create Tables
-    # =========================
+    # 3️⃣ Execute physical model from SQL file
+    with open("sql/create_tables.sql", "r", encoding="utf-8") as f:
+        cursor.executescript(f.read())
 
-    cursor.executescript("""
-    
-    PRAGMA foreign_keys = ON;
-
-    DROP TABLE IF EXISTS fact_applications;
-    DROP TABLE IF EXISTS dim_candidate;
-    DROP TABLE IF EXISTS dim_country;
-    DROP TABLE IF EXISTS dim_technology;
-    DROP TABLE IF EXISTS dim_seniority;
-    DROP TABLE IF EXISTS dim_date;
-
-    CREATE TABLE dim_candidate (
-        candidate_key INTEGER PRIMARY KEY,
-        first_name TEXT,
-        last_name TEXT,
-        email TEXT,
-        yoe INTEGER
-    );
-
-    CREATE TABLE dim_country (
-        country_key INTEGER PRIMARY KEY,
-        country TEXT
-    );
-
-    CREATE TABLE dim_technology (
-        technology_key INTEGER PRIMARY KEY,
-        technology TEXT
-    );
-
-    CREATE TABLE dim_seniority (
-        seniority_key INTEGER PRIMARY KEY,
-        seniority TEXT
-    );
-
-    CREATE TABLE dim_date (
-        date_key INTEGER PRIMARY KEY,
-        full_date TEXT,
-        year INTEGER,
-        month INTEGER,
-        month_name TEXT,
-        quarter INTEGER
-    );
-
-    CREATE TABLE fact_applications (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        candidate_key INTEGER,
-        country_key INTEGER,
-        technology_key INTEGER,
-        seniority_key INTEGER,
-        date_key INTEGER,
-        code_challenge_score INTEGER,
-        technical_interview_score INTEGER,
-        hired_flag INTEGER,
-
-        FOREIGN KEY(candidate_key) REFERENCES dim_candidate(candidate_key),
-        FOREIGN KEY(country_key) REFERENCES dim_country(country_key),
-        FOREIGN KEY(technology_key) REFERENCES dim_technology(technology_key),
-        FOREIGN KEY(seniority_key) REFERENCES dim_seniority(seniority_key),
-        FOREIGN KEY(date_key) REFERENCES dim_date(date_key)
-    );
-
-    """)
-
-    print("Tables created successfully.")
+    print("Tables created successfully from SQL script.")
 
     # =========================
-    # 2️⃣ Insert Dimensions
+    # 4️⃣ Insert Dimension Tables
     # =========================
 
     tables_dict["dim_candidate"].rename(columns={
@@ -102,10 +44,10 @@ def load_to_dw(tables_dict, db_path="data/warehouse/data_warehouse.db"):
 
     tables_dict["dim_date"].to_sql("dim_date", conn, if_exists="append", index=False)
 
-    print("Dimensions loaded.")
+    print("Dimensions loaded successfully.")
 
     # =========================
-    # 3️⃣ Insert Fact Table
+    # 5️⃣ Insert Fact Table
     # =========================
 
     tables_dict["fact_applications"].rename(columns={
@@ -113,7 +55,7 @@ def load_to_dw(tables_dict, db_path="data/warehouse/data_warehouse.db"):
         "Technical Interview Score": "technical_interview_score"
     }).to_sql("fact_applications", conn, if_exists="append", index=False)
 
-    print("Fact table loaded.")
+    print("Fact table loaded successfully.")
 
     conn.commit()
     conn.close()
