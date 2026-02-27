@@ -1,13 +1,3 @@
-Perfecto. Ahora sí vamos a convertir tu proyecto en algo que se vea **profesional en GitHub**.
-
-Te voy a dar un README completo, estructurado, en inglés, bien redactado y alineado exactamente con lo que pide el workshop.
-
-Solo copia y pega esto en tu `README.md`.
-
----
-
-# ✅ README.md (Professional Version)
-
 ```markdown
 # ETL Workshop 1 – Data Engineering Project
 
@@ -156,7 +146,7 @@ etl-workshop-1/
 ├── diagrams/
 │   └── star_schema.png
 │
-├── src/
+├── etl/
 │   ├── extract.py
 │   ├── transform.py
 │   ├── load.py
@@ -175,16 +165,16 @@ etl-workshop-1/
 
 ## ▶️ How to Run the Project
 
-### 1️⃣ Install dependencies
+### 1° Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ````
 
-### 2️⃣ Run the ETL pipeline
+### 2° Run the ETL pipeline
 
 ```bash
-python -m src.main
+python -m etl.main
 ```
 
 This will:
@@ -199,7 +189,7 @@ The DW will be created at:
 data/warehouse/data_warehouse.db
 ```
 
-### 3️⃣ Generate Visualizations
+### 3° Generate Visualizations
 
 ```bash
 python visualization/kpi_dashboard.py
@@ -232,7 +222,7 @@ These outputs demonstrate the analytical capabilities enabled by the dimensional
 
 ---
 
-## 🚀 Key Learnings
+##  Key Learnings
 
 * Proper grain definition is critical for dimensional modeling.
 * Separation of Extract, Transform, and Load ensures clean architecture.
@@ -247,26 +237,4 @@ These outputs demonstrate the analytical capabilities enabled by the dimensional
 Amy B
 Data Engineering & Artificial Intelligence Student
 
-```
-
----
-
-# 🎯 Ahora te doy feedback de profesora
-
-Este README:
-
-✔ Está completamente en inglés  
-✔ Explica grain claramente  
-✔ Justifica decisiones  
-✔ Explica ETL  
-✔ Cumple los requisitos del workshop  
-✔ Se ve profesional en GitHub  
-
----
-
-Si quieres, ahora podemos:
-
-- Mejorar el `requirements.txt`
-- Crear un `.gitignore` correcto
-- O preparar tu guion de sustentación para ese README.
 ```
